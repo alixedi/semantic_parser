@@ -54,56 +54,74 @@ Following observation holds true about these spreadsheets from the wild:
 Solution
 --------
 
-    >>> from semantic_parser import reader
-    >>> semantic_dictionary = {("item", True):      ["item", "type", "flavour"],\
-                               ("price", True):     ["rate", "price", "unit price"],\
-                               ("quantity", False): ["quantity"],\
-                               ("total", True):     ["total", "sum"],\
-                               ("remarks", False):  ["remarks", "comments"]}
-    >>> lines = [line for line in reader("test/acme_sweets.csv", semantic_dictionary)]
-    >>> import pprint
-    >>> pp = pprint.PrettyPrinter(indent=4)
-    >>> lines = [line for line in reader("test/acme_sweets.csv", semantic_dictionary)]
-    >>> pp.pprint(lines)
-    [   {   ('item', True): 'A',
-            ('price', True): '0.15',
-            ('quantity', False): '5',
-            ('remarks', False): 'Promotion',
-            ('total', True): '0.75'},
-        {   ('item', True): 'B',
-            ('price', True): '2',
-            ('quantity', False): '',
-            ('remarks', False): '',
-            ('total', True): '0'},
-        {   ('item', True): 'C',
-            ('price', True): '20',
-            ('quantity', False): '1',
-            ('remarks', False): '',
-            ('total', True): '20'}]
-    >>> lines = [line for line in reader("test/acme_pies.csv", semantic_dictionary)]
-    >>> pp.pprint(lines)
-    [   {   ('item', True): 'A',
-            ('price', True): '0.15',
-            ('quantity', False): '5',
-            ('remarks', False): 'Promotion',
-            ('total', True): '0.75'},
-        {   ('item', True): 'B',
-            ('price', True): '2',
-            ('quantity', False): '',
-            ('remarks', False): '',
-            ('total', True): '0'},
-        {   ('item', True): 'C',
-            ('price', True): '20',
-            ('quantity', False): '1',
-            ('remarks', False): '',
-            ('total', True): '20'}]
-    >>> lines = [line for line in reader("test/acme_drinks.csv", semantic_dictionary)]
-    >>> pp.pprint(lines)
-    [   {   ('item', True): 'X',
-            ('price', True): '0.15',
-            ('quantity', False): '5',
-            ('total', True): '0.75'},
-        {   ('item', True): 'Y',
-            ('price', True): '2',
-            ('quantity', False): '3',
-            ('total', True): '6'}]
+Setting up:
+
+```python
+>>> from semantic_parser import reader
+>>> semantic_dictionary = {("item", True):      ["item", "type", "flavour"],\
+                           ("price", True):     ["rate", "price", "unit price"],\
+                           ("quantity", False): ["quantity"],\
+                           ("total", True):     ["total", "sum"],\
+                           ("remarks", False):  ["remarks", "comments"]}
+>>> import pprint
+>>> pp = pprint.PrettyPrinter(indent=4)
+```
+
+Specimen-A:
+
+```python
+>>> lines = [line for line in reader("test/acme_sweets.csv", semantic_dictionary)]
+>>> pp.pprint(lines)
+[   {   ('item', True): 'A',
+        ('price', True): '0.15',
+        ('quantity', False): '5',
+        ('remarks', False): 'Promotion',
+        ('total', True): '0.75'},
+    {   ('item', True): 'B',
+        ('price', True): '2',
+        ('quantity', False): '',
+        ('remarks', False): '',
+        ('total', True): '0'},
+    {   ('item', True): 'C',
+        ('price', True): '20',
+        ('quantity', False): '1',
+        ('remarks', False): '',
+        ('total', True): '20'}]
+```
+
+Specimen-B:
+
+```python
+>>> lines = [line for line in reader("test/acme_pies.csv", semantic_dictionary)]
+>>> pp.pprint(lines)
+[   {   ('item', True): 'A',
+        ('price', True): '0.15',
+        ('quantity', False): '5',
+        ('remarks', False): 'Promotion',
+        ('total', True): '0.75'},
+    {   ('item', True): 'B',
+        ('price', True): '2',
+        ('quantity', False): '',
+        ('remarks', False): '',
+        ('total', True): '0'},
+    {   ('item', True): 'C',
+        ('price', True): '20',
+        ('quantity', False): '1',
+        ('remarks', False): '',
+        ('total', True): '20'}]
+```
+
+Specimen-C:
+
+```python
+>>> lines = [line for line in reader("test/acme_drinks.csv", semantic_dictionary)]
+>>> pp.pprint(lines)
+[   {   ('item', True): 'X',
+        ('price', True): '0.15',
+        ('quantity', False): '5',
+        ('total', True): '0.75'},
+    {   ('item', True): 'Y',
+        ('price', True): '2',
+        ('quantity', False): '3',
+        ('total', True): '6'}]
+```
