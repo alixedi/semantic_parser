@@ -2,49 +2,125 @@ from string import lower
 from re import sub
 import csv
 
-# remove non-alphanumeric characters
-fa = lambda x: lower(sub(r'\W+', '', str(x)))
-fas = lambda x: [fa(y) for y in x]
+def _alphanum(x):
+    """
+    Given a string of arbitrary characters x, returns a string containing 
+    only alphanumeric characters.
+    >>> _alphanum("Hello World2!")
+    'helloworld2'
+    """
+    return lower(sub(r'\W+', '', str(x)))
 
-# list index sans exception
-fi = lambda l,x: l.index(x) if x in l else None
+def _alphanum_list(x):
+    """
+    Given a list of strings containing arbitrary characters x, returns a
+    list of strings containing only alphanumeric characters.
+    >>> _alphanum_list(["Hello World!", "Hello World2!"])
+    ['helloworld', 'helloworld2']
+    """
+    return [_alphanum(y) for y in x]
 
-# case-insensitive, alphanumeric in and index
-fx = lambda l,x: fi(fas(l), fa(x))
-fin = lambda l,x: fa(x) in fas(l)
+def _silent_idx(x, y):
+    """
+    Given a list x and an object y, returns the index of y in x. Otherwise
+    return a None without raising any exceptions.
+    >>> _silent_idx([1,2,3,4], 2)
+    1
+    >>> _silent_idx([1,2,3,4], 5)
+    """
+    if y in x:
+        return x.index(y) 
+    else:
+        return None
 
-# list access that defaults to ''
-fl = lambda l,x: l[x] if x < len(l) else ''
+def _soft_in(x, y):
+    """
+    Given a list x and an object y, checks if y is in x ignoring case
+    as well as non-alphanumeric characters.
+    >>> _soft_in(["Hello World!", "Hello Joe!"], "hello joe")
+    True
+    >>> _soft_in(["Hello World!", "Hello Joe!"], "hello moe")
+    False
+    """
+    return _alphanum(y) in _alphanum_list(x)
 
+def _soft_idx(x, y):
+    """
+    Given a list x and an object y, returns the index of y in x ignoring
+    case as well as non-alphanumeric characters.
+    >>> _soft_idx(["Hello World!", "Hello Joe!"], "hello joe")
+    1
+    >>> _soft_idx(["Hello World!", "Hello Joe!"], "hello moe")
+    """
+    return _silent_idx(_alphanum_list(x), _alphanum(y))
 
-def idx(line,vals):
-    '''
-    Take a line and a list of valid values returns the index of first
-    occurrence of any of the values in the list.
-    '''
-    for val in vals:
-        if fin(line, val):
-            return fx(line, val)
+def _silent_get(x, i):
+    """
+    Given a list x and an index i, returns the element from the list
+    at index i if i is valid. Otherwise, return empty string - ''.
+    >>> _silent_get([1,2,3,4], 2)
+    3
+    >>> _silent_get([1,2,3,4], 5)
+    ''
+    """
+    if i < len(x):
+        return x[i]
+    else:
+        return ''
 
-def datareader(fname, sd):
-    '''
-    Takes a file and semantic dictionary and yields data lines.
-    'Data' here is whatever lies underneath a header whereas a header 
-    is a line that contains one of the valid titles of all mandatory 
-    columns as defined in the semantic dict.
-    '''
+def _find_alias(line, aliases):
+    """
+    Given a line and a list of aliases, returns the index of first
+    occurrence of any of the alias in the list.
+    >>> _find_alias(["A", "B", "C", "D"], ["b", "bee", "B"])
+    1
+    >>> _find_alias(["A", "B", "C", "D"], ["e", "eee", "E"])
+    """
+    for alias in aliases:
+        if _soft_in(line, alias):
+            return _soft_idx(line, alias)
+
+def reader(fname, sd):
+    """
+    Given a csv file and a semantic dictionary, yields valid data lines.
+    Valid data lines are anything under a valid header and the end of the
+    given csv file and contain all of the mandatory fields as defined in 
+    the semantic dictionary. Header is a line somewhere near the beginning 
+    of the csv file that comprises of fields as defined in the semantic 
+    dictionary. A field can be mandatory or optional, has a unique identifier 
+    and as many aliases. For instance "price", "price($)", "rates", "cost" 
+    and anything else that a real-world invoice in csv format dares to throw
+    at you.
+    >>> sd = {("item",True): ["item", "items"],\
+              ("rate", True): ["rate", "rates", "price"],\
+              ("quantity", False): ["quantity", "number of items"],\
+              ("total", True): ["total", "sum"],\
+              ("remarks", False): ["remarks", "comments"]}
+    >>> for l in reader("./test/test.csv", sd):
+    ...     print l
+    ...     
+    {('remarks', False): 'As per order', ('total', True): '0.75', ('quantity', False): '5', ('item', True): 'A', ('rate', True): '0.15'}
+    {('remarks', False): 'Promotion', ('total', True): '2', ('quantity', False): '', ('item', True): 'B', ('rate', True): '2'}
+    {('remarks', False): 'Monthly quota', ('total', True): '20', ('quantity', False): '1', ('item', True): 'C', ('rate', True): '20'}
+    """
     with open(fname, 'rb') as f:
         rdr = csv.reader(f)
         hdr = None
         for l in rdr:
+            # header has not been found
             if not hdr:
-                x = {k: idx(l,sd[k]) for k in sd}
-                # have we found a header?
+                # for each field defined in the semantic dictionary,
+                # search for one of the aliases to be present in the line
+                x = {k: _find_alias(l,sd[k]) for k in sd}
+                # have we found a header? essentially: have we found a
+                # match for one of the aliases of each mandatory field?
                 if all([x[k] is not None for k in x if k[1]]):
                     hdr = x
                     continue
+            # header has been found
             else:
-                # one or more mandatory columns are missing?
-                if any([fl(l,hdr[k]) is '' for k in hdr if k[1]]):
+                # check of one or more mandatory columns are missing?
+                if any([_silent_get(l,hdr[k]) is '' for k in hdr if k[1]]):
                     continue
+                # yields a dictionary with field identifier as keys
                 yield {k: l[hdr[k]] for k in hdr if hdr[k] is not None}
