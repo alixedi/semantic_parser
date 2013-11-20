@@ -1,6 +1,8 @@
 Semantic Parser
 ===============
 
+[![Build Status](https://travis-ci.org/alixedi/semantic_parser.png)](https://travis-ci.org/alixedi/semantic_parser)
+
 Get tabular data out of real-world spreadsheets.
 
 
