@@ -1,4 +1,0 @@
-Installation
-============
-
-how to install.

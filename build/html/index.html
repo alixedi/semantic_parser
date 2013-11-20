@@ -25,8 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Semantic Parser 0.1 documentation" href="#" />
-    <link rel="next" title="Installation" href="installation.html" /> 
+    <link rel="top" title="Semantic Parser 0.1 documentation" href="#" /> 
   </head>
   <body>
     <div class="related">
@@ -35,12 +34,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="installation.html" title="Installation"
-             accesskey="N">next</a> |</li>
         <li><a href="#">Semantic Parser 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,13 +45,132 @@
             
   <div class="section" id="welcome-to-semantic-parser-s-documentation">
 <h1>Welcome to Semantic Parser&#8217;s documentation!<a class="headerlink" href="#welcome-to-semantic-parser-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Get tabular data out of real-world spreadsheets.</p>
+</div>
+<div class="section" id="problem-statement">
+<h2>Problem Statement<a class="headerlink" href="#problem-statement" title="Permalink to this headline">¶</a></h2>
+<p>So you need to parse spreadsheets lets say invoices from snack vendors - lots of them if you happen to have an open pantry at your startup. Invariably, the first step would be to convert these spreadsheets in CSV resulting in specimen such as:</p>
+<p>Specimen-A:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&#39;Acme Sweets&#39;</span>                                        <span class="s">&#39;&#39;</span>      <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>
+<span class="s">&#39;Shop No. 12, ABC Road.&#39;</span>                             <span class="s">&#39;&#39;</span>      <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>
+<span class="s">&#39;&#39;</span>                                                   <span class="s">&#39;&#39;</span>      <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>
+<span class="s">&#39;Item&#39;</span>                                               <span class="s">&#39;Rate&#39;</span>  <span class="s">&#39;Quantity&#39;</span>  <span class="s">&#39;Total&#39;</span>  <span class="s">&#39;Remarks&#39;</span>
+<span class="s">&#39;A&#39;</span>                                                  <span class="s">&#39;0.15&#39;</span>  <span class="s">&#39;5&#39;</span>         <span class="s">&#39;0.75&#39;</span>   <span class="s">&#39;Promotion&#39;</span>
+<span class="s">&#39;B&#39;</span>                                                  <span class="s">&#39;2&#39;</span>     <span class="s">&#39;&#39;</span>          <span class="s">&#39;0&#39;</span>      <span class="s">&#39;&#39;</span>
+<span class="s">&#39;C&#39;</span>                                                  <span class="s">&#39;20&#39;</span>    <span class="s">&#39;1&#39;</span>         <span class="s">&#39;20&#39;</span>     <span class="s">&#39;&#39;</span>
+<span class="s">&#39;&#39;</span>                                                   <span class="s">&#39;&#39;</span>      <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>
+<span class="s">&#39;* all rates are in USD unless otherwise specified&#39;</span>  <span class="s">&#39;&#39;</span>      <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>
+</pre></div>
+</div>
+<p>Specimen-B:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&#39;Acme Pies&#39;</span>                                          <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>
+<span class="s">&#39;Shop No. 121, XYZ Road.&#39;</span>                            <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>
+<span class="s">&#39;&#39;</span>                                                   <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>
+<span class="s">&#39;Type&#39;</span>                                               <span class="s">&#39;Quantity&#39;</span>  <span class="s">&#39;Price&#39;</span>  <span class="s">&#39;Total&#39;</span>  <span class="s">&#39;Comments&#39;</span>
+<span class="s">&#39;A&#39;</span>                                                  <span class="s">&#39;5&#39;</span>         <span class="s">&#39;0.15&#39;</span>   <span class="s">&#39;0.75&#39;</span>   <span class="s">&#39;Promotion&#39;</span>
+<span class="s">&#39;B&#39;</span>                                                  <span class="s">&#39;&#39;</span>          <span class="s">&#39;2&#39;</span>      <span class="s">&#39;0&#39;</span>      <span class="s">&#39;&#39;</span>
+<span class="s">&#39;C&#39;</span>                                                  <span class="s">&#39;1&#39;</span>         <span class="s">&#39;20&#39;</span>     <span class="s">&#39;20&#39;</span>     <span class="s">&#39;&#39;</span>
+<span class="s">&#39;&#39;</span>                                                   <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>
+<span class="s">&#39;* all rates are in USD unless otherwise specified&#39;</span>  <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>       <span class="s">&#39;&#39;</span>
+</pre></div>
+</div>
+<p>Specimen-C:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&#39;Acme Drinks&#39;</span>             <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>            <span class="s">&#39;&#39;</span>
+<span class="s">&#39;Shop No. 21, ZZZ Road.&#39;</span>  <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>            <span class="s">&#39;&#39;</span>
+<span class="s">&#39;&#39;</span>                        <span class="s">&#39;&#39;</span>          <span class="s">&#39;&#39;</span>            <span class="s">&#39;&#39;</span>
+<span class="s">&#39;Flavour&#39;</span>                 <span class="s">&#39;Quantity&#39;</span>  <span class="s">&#39;Unit Price&#39;</span>  <span class="s">&#39;Sum&#39;</span>
+<span class="s">&#39;X&#39;</span>                       <span class="s">&#39;5&#39;</span>         <span class="s">&#39;0.15&#39;</span>        <span class="s">&#39;0.75&#39;</span>
+<span class="s">&#39;Y&#39;</span>                       <span class="s">&#39;3&#39;</span>         <span class="s">&#39;2&#39;</span>           <span class="s">&#39;6&#39;</span>
+</pre></div>
+</div>
+<p>Following observation holds true about these spreadsheets from the wild:</p>
+<ol class="arabic simple">
+<li>Valid data lies between the header and the footer or between the header and the end of file.</li>
+<li>Header as well as data comprises fields that can be mandatory (e.g. Rate) or optional (e.g. Remarks).</li>
+<li>Each unique field can have many aliases (e.g. Rate, Price for the same field).</li>
+<li>Order of the fields may vary from spreadsheet to spreadsheet.</li>
+</ol>
+</div>
+<div class="section" id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+<p>Setting up:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">semantic_parser</span> <span class="kn">import</span> <span class="n">reader</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">semantic_dictionary</span> <span class="o">=</span> <span class="p">{(</span><span class="s">&quot;item&quot;</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span>      <span class="p">[</span><span class="s">&quot;item&quot;</span><span class="p">,</span> <span class="s">&quot;type&quot;</span><span class="p">,</span> <span class="s">&quot;flavour&quot;</span><span class="p">],</span>\
+<span class="go">                           (&quot;price&quot;, True):     [&quot;rate&quot;, &quot;price&quot;, &quot;unit price&quot;],\</span>
+<span class="go">                           (&quot;quantity&quot;, False): [&quot;quantity&quot;],\</span>
+<span class="go">                           (&quot;total&quot;, True):     [&quot;total&quot;, &quot;sum&quot;],\</span>
+<span class="go">                           (&quot;remarks&quot;, False):  [&quot;remarks&quot;, &quot;comments&quot;]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pprint</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span> <span class="o">=</span> <span class="n">pprint</span><span class="o">.</span><span class="n">PrettyPrinter</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Specimen-A:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">(</span><span class="s">&quot;test/acme_sweets.csv&quot;</span><span class="p">,</span> <span class="n">semantic_dictionary</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+<span class="go">[   {   (&#39;item&#39;, True): &#39;A&#39;,</span>
+<span class="go">        (&#39;price&#39;, True): &#39;0.15&#39;,</span>
+<span class="go">        (&#39;quantity&#39;, False): &#39;5&#39;,</span>
+<span class="go">        (&#39;remarks&#39;, False): &#39;Promotion&#39;,</span>
+<span class="go">        (&#39;total&#39;, True): &#39;0.75&#39;},</span>
+<span class="go">    {   (&#39;item&#39;, True): &#39;B&#39;,</span>
+<span class="go">        (&#39;price&#39;, True): &#39;2&#39;,</span>
+<span class="go">        (&#39;quantity&#39;, False): &#39;&#39;,</span>
+<span class="go">        (&#39;remarks&#39;, False): &#39;&#39;,</span>
+<span class="go">        (&#39;total&#39;, True): &#39;0&#39;},</span>
+<span class="go">    {   (&#39;item&#39;, True): &#39;C&#39;,</span>
+<span class="go">        (&#39;price&#39;, True): &#39;20&#39;,</span>
+<span class="go">        (&#39;quantity&#39;, False): &#39;1&#39;,</span>
+<span class="go">        (&#39;remarks&#39;, False): &#39;&#39;,</span>
+<span class="go">        (&#39;total&#39;, True): &#39;20&#39;}]</span>
+</pre></div>
+</div>
+<p>Specimen-B:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">(</span><span class="s">&quot;test/acme_pies.csv&quot;</span><span class="p">,</span> <span class="n">semantic_dictionary</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+<span class="go">[   {   (&#39;item&#39;, True): &#39;A&#39;,</span>
+<span class="go">        (&#39;price&#39;, True): &#39;0.15&#39;,</span>
+<span class="go">        (&#39;quantity&#39;, False): &#39;5&#39;,</span>
+<span class="go">        (&#39;remarks&#39;, False): &#39;Promotion&#39;,</span>
+<span class="go">        (&#39;total&#39;, True): &#39;0.75&#39;},</span>
+<span class="go">    {   (&#39;item&#39;, True): &#39;B&#39;,</span>
+<span class="go">        (&#39;price&#39;, True): &#39;2&#39;,</span>
+<span class="go">        (&#39;quantity&#39;, False): &#39;&#39;,</span>
+<span class="go">        (&#39;remarks&#39;, False): &#39;&#39;,</span>
+<span class="go">        (&#39;total&#39;, True): &#39;0&#39;},</span>
+<span class="go">    {   (&#39;item&#39;, True): &#39;C&#39;,</span>
+<span class="go">        (&#39;price&#39;, True): &#39;20&#39;,</span>
+<span class="go">        (&#39;quantity&#39;, False): &#39;1&#39;,</span>
+<span class="go">        (&#39;remarks&#39;, False): &#39;&#39;,</span>
+<span class="go">        (&#39;total&#39;, True): &#39;20&#39;}]</span>
+</pre></div>
+</div>
+<p>Specimen-C:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">(</span><span class="s">&quot;test/acme_drinks.csv&quot;</span><span class="p">,</span> <span class="n">semantic_dictionary</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+<span class="go">[   {   (&#39;item&#39;, True): &#39;X&#39;,</span>
+<span class="go">        (&#39;price&#39;, True): &#39;0.15&#39;,</span>
+<span class="go">        (&#39;quantity&#39;, False): &#39;5&#39;,</span>
+<span class="go">        (&#39;total&#39;, True): &#39;0.75&#39;},</span>
+<span class="go">    {   (&#39;item&#39;, True): &#39;Y&#39;,</span>
+<span class="go">        (&#39;price&#39;, True): &#39;2&#39;,</span>
+<span class="go">        (&#39;quantity&#39;, False): &#39;3&#39;,</span>
+<span class="go">        (&#39;total&#39;, True): &#39;6&#39;}]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>I am still working on the pip setup for this project. Meanwhile, the installation is still super-simple. Just put semantic_parser.py somewhere on your PYTHON_PATH and you should be good to go.</p>
+</div>
+<div class="section" id="future-work">
+<h2>Future Work<a class="headerlink" href="#future-work" title="Permalink to this headline">¶</a></h2>
+<p>Lost of ideas on how to take this forward. The most intriguing one: In order to make this true to the word &#8220;semantic&#8221;, there is value in talking to a thesaurus API in order to populate the semantic dictionary (semi?)automatically.</p>
 <div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<ul class="simple">
 </ul>
+</div>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
@@ -79,14 +191,18 @@
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome to Semantic Parser&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#problem-statement">Problem Statement</a></li>
+<li><a class="reference internal" href="#solution">Solution</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#future-work">Future Work</a><ul>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
-  <h4>Next topic</h4>
-  <p class="topless"><a href="installation.html"
-                        title="next chapter">Installation</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -115,12 +231,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="installation.html" title="Installation"
-             >next</a> |</li>
         <li><a href="#">Semantic Parser 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>

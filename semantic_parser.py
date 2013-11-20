@@ -1,8 +1,3 @@
-"""
-Semantic Parser 0.1
-"""
-
-
 from string import lower
 from re import sub
 import csv
@@ -96,6 +91,74 @@ def reader(fname, sd):
     and as many aliases. For instance "price", "price($)", "rates", "cost" 
     and anything else that a real-world invoice in csv format dares to throw
     at you.
+
+    Set everything up: ::
+
+        >>> from semantic_parser import reader
+        >>> i = (("item", True), ["item", "type", "flavour"])
+        >>> p = (("price", True), ["rate", "price", "unit price"])
+        >>> q = (("quantity", False), ["quantity"])
+        >>> t = (("total", True), ["total", "sum"])
+        >>> r = (("remarks", False), ["remarks", "comments"])
+        >>> sd = dict([i, p, q, t, r])
+
+    Set-up the pretty printer: ::
+
+        >>> import pprint
+        >>> pp = pprint.PrettyPrinter(indent=4)
+
+    Parse Acme Sweets: ::
+
+        >>> lines = [line for line in reader("test/acme_sweets.csv", sd)]
+        >>> pp.pprint(lines)
+        [   {   ('item', True): 'A',
+                ('price', True): '0.15',
+                ('quantity', False): '5',
+                ('remarks', False): 'Promotion',
+                ('total', True): '0.75'},
+            {   ('item', True): 'B',
+                ('price', True): '2',
+                ('quantity', False): '',
+                ('remarks', False): '',
+                ('total', True): '0'},
+            {   ('item', True): 'C',
+                ('price', True): '20',
+                ('quantity', False): '1',
+                ('remarks', False): '',
+                ('total', True): '20'}]
+
+    Parse Acme Pies: ::
+
+        >>> lines = [line for line in reader("test/acme_pies.csv", sd)]
+        >>> pp.pprint(lines)
+        [   {   ('item', True): 'A',
+                ('price', True): '0.15',
+                ('quantity', False): '5',
+                ('remarks', False): 'Promotion',
+                ('total', True): '0.75'},
+            {   ('item', True): 'B',
+                ('price', True): '2',
+                ('quantity', False): '',
+                ('remarks', False): '',
+                ('total', True): '0'},
+            {   ('item', True): 'C',
+                ('price', True): '20',
+                ('quantity', False): '1',
+                ('remarks', False): '',
+                ('total', True): '20'}]
+
+    Parse Acme Drinks: ::
+
+        >>> lines = [line for line in reader("test/acme_drinks.csv", sd)]
+        >>> pp.pprint(lines)
+        [   {   ('item', True): 'X',
+                ('price', True): '0.15',
+                ('quantity', False): '5',
+                ('total', True): '0.75'},
+            {   ('item', True): 'Y',
+                ('price', True): '2',
+                ('quantity', False): '3',
+                ('total', True): '6'}]
     """
     with open(fname, 'rb') as f:
         rdr = csv.reader(f)
