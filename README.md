@@ -4,8 +4,8 @@ Semantic Parser
 Get tabular data out of real-world spreadsheets.
 
 
-Problem
--------
+Problem Statement
+-----------------
 
 So you need to parse spreadsheets lets say invoices from snack vendors - lots of them if you happen to have an open pantry at your startup. Invariably, the first step would be to convert these spreadsheets in CSV resulting in specimen such as:
 
