@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Semantic parser by alixedi</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Semantic parser</h1>
+        <p>Get tabular data out of real-world spreadsheets.</p>
+
+        <p class="view"><a href="https://github.com/alixedi/semantic_parser">View the Project on GitHub <small>alixedi/semantic_parser</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/alixedi/semantic_parser/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/alixedi/semantic_parser/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/alixedi/semantic_parser">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="semantic-parser" class="anchor" href="#semantic-parser"><span class="octicon octicon-link"></span></a>Semantic Parser</h1>
+
+<p><a href="https://travis-ci.org/alixedi/semantic_parser"><img src="https://travis-ci.org/alixedi/semantic_parser.png" alt="Build Status"></a> 
+<a href="https://crate.io/packages/semantic_parser/"><img src="https://pypip.in/v/semantic_parser/badge.png" alt="PyPi version"></a>
+<a href="https://crate.io/packages/semantic_parser/"><img src="https://pypip.in/d/semantic_parser/badge.png" alt="PyPi downloads"></a>
+<a href="https://bitdeli.com/free" title="Bitdeli Badge"><img src="https://d2weczhvl823v0.cloudfront.net/alixedi/semantic_parser/trend.png" alt="Bitdeli Badge"></a></p>
+
+<p>Get tabular data out of real-world spreadsheets.</p>
+
+<h2>
+<a name="problem-statement" class="anchor" href="#problem-statement"><span class="octicon octicon-link"></span></a>Problem Statement</h2>
+
+<p>So you need to parse spreadsheets lets say invoices from snack vendors - lots of them if you happen to have an open pantry at your startup. Invariably, the first step would be to convert these spreadsheets in CSV resulting in specimen such as:</p>
+
+<p>Specimen-A:</p>
+
+<pre><code>'Acme Sweets'                                        ''      ''          ''       ''
+'Shop No. 12, ABC Road.'                             ''      ''          ''       ''
+''                                                   ''      ''          ''       ''
+'Item'                                               'Rate'  'Quantity'  'Total'  'Remarks'
+'A'                                                  '0.15'  '5'         '0.75'   'Promotion'
+'B'                                                  '2'     ''          '0'      ''
+'C'                                                  '20'    '1'         '20'     ''
+''                                                   ''      ''          ''       ''
+'* all rates are in USD unless otherwise specified'  ''      ''          ''       ''
+</code></pre>
+
+<p>Specimen-B:</p>
+
+<pre><code>'Acme Pies'                                          ''          ''       ''       ''
+'Shop No. 121, XYZ Road.'                            ''          ''       ''       ''
+''                                                   ''          ''       ''       ''
+'Type'                                               'Quantity'  'Price'  'Total'  'Comments'
+'A'                                                  '5'         '0.15'   '0.75'   'Promotion'
+'B'                                                  ''          '2'      '0'      ''
+'C'                                                  '1'         '20'     '20'     ''
+''                                                   ''          ''       ''       ''
+'* all rates are in USD unless otherwise specified'  ''          ''       ''       ''
+</code></pre>
+
+<p>Specimen-C:</p>
+
+<pre><code>'Acme Drinks'             ''          ''            ''
+'Shop No. 21, ZZZ Road.'  ''          ''            ''
+''                        ''          ''            ''
+'Flavour'                 'Quantity'  'Unit Price'  'Sum'
+'X'                       '5'         '0.15'        '0.75'
+'Y'                       '3'         '2'           '6'
+</code></pre>
+
+<p>Following observation holds true about these spreadsheets from the wild:</p>
+
+<ol>
+<li>Valid data lies between the header and the footer or between the header and the end of file.</li>
+<li>Header as well as data comprises fields that can be mandatory (e.g. Rate) or optional (e.g. Remarks).</li>
+<li>Each unique field can have many aliases (e.g. Rate, Price for the same field).</li>
+<li>Order of the fields may vary from spreadsheet to spreadsheet.</li>
+</ol><h2>
+<a name="solution" class="anchor" href="#solution"><span class="octicon octicon-link"></span></a>Solution</h2>
+
+<p>Setting up:</p>
+
+<div class="highlight highlight-python"><pre><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">semantic_parser</span> <span class="kn">import</span> <span class="n">reader</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">semantic_dictionary</span> <span class="o">=</span> <span class="p">{(</span><span class="s">"item"</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span>      <span class="p">[</span><span class="s">"item"</span><span class="p">,</span> <span class="s">"type"</span><span class="p">,</span> <span class="s">"flavour"</span><span class="p">],</span>\
+                           <span class="p">(</span><span class="s">"price"</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span>     <span class="p">[</span><span class="s">"rate"</span><span class="p">,</span> <span class="s">"price"</span><span class="p">,</span> <span class="s">"unit price"</span><span class="p">],</span>\
+                           <span class="p">(</span><span class="s">"quantity"</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="p">[</span><span class="s">"quantity"</span><span class="p">],</span>\
+                           <span class="p">(</span><span class="s">"total"</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span>     <span class="p">[</span><span class="s">"total"</span><span class="p">,</span> <span class="s">"sum"</span><span class="p">],</span>\
+                           <span class="p">(</span><span class="s">"remarks"</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>  <span class="p">[</span><span class="s">"remarks"</span><span class="p">,</span> <span class="s">"comments"</span><span class="p">]}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pprint</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pp</span> <span class="o">=</span> <span class="n">pprint</span><span class="o">.</span><span class="n">PrettyPrinter</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+<p>Specimen-A:</p>
+
+<div class="highlight highlight-python"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">(</span><span class="s">"test/acme_sweets.csv"</span><span class="p">,</span> <span class="n">semantic_dictionary</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pp</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+<span class="p">[</span>   <span class="p">{</span>   <span class="p">(</span><span class="s">'item'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'A'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'price'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'0.15'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'quantity'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">'5'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'remarks'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">'Promotion'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'total'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'0.75'</span><span class="p">},</span>
+    <span class="p">{</span>   <span class="p">(</span><span class="s">'item'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'B'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'price'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'2'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'quantity'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">''</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'remarks'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">''</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'total'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'0'</span><span class="p">},</span>
+    <span class="p">{</span>   <span class="p">(</span><span class="s">'item'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'C'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'price'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'20'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'quantity'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">'1'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'remarks'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">''</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'total'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'20'</span><span class="p">}]</span>
+</pre></div>
+
+<p>Specimen-B:</p>
+
+<div class="highlight highlight-python"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">(</span><span class="s">"test/acme_pies.csv"</span><span class="p">,</span> <span class="n">semantic_dictionary</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pp</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+<span class="p">[</span>   <span class="p">{</span>   <span class="p">(</span><span class="s">'item'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'A'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'price'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'0.15'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'quantity'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">'5'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'remarks'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">'Promotion'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'total'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'0.75'</span><span class="p">},</span>
+    <span class="p">{</span>   <span class="p">(</span><span class="s">'item'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'B'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'price'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'2'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'quantity'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">''</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'remarks'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">''</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'total'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'0'</span><span class="p">},</span>
+    <span class="p">{</span>   <span class="p">(</span><span class="s">'item'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'C'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'price'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'20'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'quantity'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">'1'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'remarks'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">''</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'total'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'20'</span><span class="p">}]</span>
+</pre></div>
+
+<p>Specimen-C:</p>
+
+<div class="highlight highlight-python"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">(</span><span class="s">"test/acme_drinks.csv"</span><span class="p">,</span> <span class="n">semantic_dictionary</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pp</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+<span class="p">[</span>   <span class="p">{</span>   <span class="p">(</span><span class="s">'item'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'X'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'price'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'0.15'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'quantity'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">'5'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'total'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'0.75'</span><span class="p">},</span>
+    <span class="p">{</span>   <span class="p">(</span><span class="s">'item'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'Y'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'price'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'2'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'quantity'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="s">'3'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">'total'</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="s">'6'</span><span class="p">}]</span>
+</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/alixedi">alixedi</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
