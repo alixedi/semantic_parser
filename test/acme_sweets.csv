@@ -1,0 +1,9 @@
+Acme Sweets,,,,
+"Shop No. 12, ABC Road.",,,,
+,,,,
+Item,Rate,Quantity,Total,Remarks
+A,0.15,5,0.75,Promotion
+B,2,,0,
+C,20,1,20,
+,,,,
+* all rates are in USD unless otherwise specified,,,,

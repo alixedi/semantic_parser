@@ -91,17 +91,61 @@ def reader(fname, sd):
     and as many aliases. For instance "price", "price($)", "rates", "cost" 
     and anything else that a real-world invoice in csv format dares to throw
     at you.
-    >>> sd = {("item",True): ["item", "items"],\
-              ("rate", True): ["rate", "rates", "price"],\
-              ("quantity", False): ["quantity", "number of items"],\
-              ("total", True): ["total", "sum"],\
-              ("remarks", False): ["remarks", "comments"]}
-    >>> for l in reader("./test/test.csv", sd):
-    ...     print l
-    ...     
-    {('remarks', False): 'As per order', ('total', True): '0.75', ('quantity', False): '5', ('item', True): 'A', ('rate', True): '0.15'}
-    {('remarks', False): 'Promotion', ('total', True): '2', ('quantity', False): '', ('item', True): 'B', ('rate', True): '2'}
-    {('remarks', False): 'Monthly quota', ('total', True): '20', ('quantity', False): '1', ('item', True): 'C', ('rate', True): '20'}
+
+        >>> from semantic_parser import reader
+        >>> semantic_dictionary = {("item", True):      ["item", "type", "flavour"],
+                                   ("price", True):     ["rate", "price", "unit price"],
+                                   ("quantity", False): ["quantity"],
+                                   ("total", True):     ["total", "sum"],
+                                   ("remarks", False):  ["remarks", "comments"]}
+        >>> lines = [line for line in reader("test/acme_sweets.csv", semantic_dictionary)]
+        >>> import pprint
+        >>> pp = pprint.PrettyPrinter(indent=4)
+        >>> lines = [line for line in reader("test/acme_sweets.csv", semantic_dictionary)]
+        >>> pp.pprint(lines)
+        [   {   ('item', True): 'A',
+                ('price', True): '0.15',
+                ('quantity', False): '5',
+                ('remarks', False): 'Promotion',
+                ('total', True): '0.75'},
+            {   ('item', True): 'B',
+                ('price', True): '2',
+                ('quantity', False): '',
+                ('remarks', False): '',
+                ('total', True): '0'},
+            {   ('item', True): 'C',
+                ('price', True): '20',
+                ('quantity', False): '1',
+                ('remarks', False): '',
+                ('total', True): '20'}]
+        >>> lines = [line for line in reader("test/acme_pies.csv", semantic_dictionary)]
+        >>> pp.pprint(lines)
+        [   {   ('item', True): 'A',
+                ('price', True): '0.15',
+                ('quantity', False): '5',
+                ('remarks', False): 'Promotion',
+                ('total', True): '0.75'},
+            {   ('item', True): 'B',
+                ('price', True): '2',
+                ('quantity', False): '',
+                ('remarks', False): '',
+                ('total', True): '0'},
+            {   ('item', True): 'C',
+                ('price', True): '20',
+                ('quantity', False): '1',
+                ('remarks', False): '',
+                ('total', True): '20'}]
+        >>> lines = [line for line in reader("test/acme_drinks.csv", semantic_dictionary)]
+        >>> pp.pprint(lines)
+        [   {   ('item', True): 'X',
+                ('price', True): '0.15',
+                ('quantity', False): '5',
+                ('total', True): '0.75'},
+            {   ('item', True): 'Y',
+                ('price', True): '2',
+                ('quantity', False): '3',
+                ('total', True): '6'}]
+        >>> 
     """
     with open(fname, 'rb') as f:
         rdr = csv.reader(f)
