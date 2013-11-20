@@ -11,10 +11,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-.. automodule:: semantic_parser
-
-.. autofunction:: reader
-
+   installation.rst
+   usage.rst
+   api.rst
 
 
 Indices and tables
