@@ -1,7 +1,10 @@
 Semantic Parser
 ===============
 
-[![Build Status](https://travis-ci.org/alixedi/semantic_parser.png)](https://travis-ci.org/alixedi/semantic_parser) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/alixedi/semantic_parser/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![Build Status](https://travis-ci.org/alixedi/semantic_parser.png)](https://travis-ci.org/alixedi/semantic_parser) 
+[![PyPi version](https://pypip.in/v/semantic_parser/badge.png)](https://crate.io/packages/semantic_parser/)
+[![PyPi downloads](https://pypip.in/d/semantic_parser/badge.png)](https://crate.io/packages/semantic_parser/)
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/alixedi/semantic_parser/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 Get tabular data out of real-world spreadsheets.
 
