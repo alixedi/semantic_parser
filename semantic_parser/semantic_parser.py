@@ -109,7 +109,7 @@ def reader(fname, sd):
 
     Parse Acme Sweets: ::
 
-        >>> lines = [line for line in reader("test/acme_sweets.csv", sd)]
+        >>> lines = [line for line in reader("./test/acme_sweets.csv", sd)]
         >>> pp.pprint(lines)
         [   {   ('item', True): 'A',
                 ('price', True): '0.15',
@@ -129,7 +129,7 @@ def reader(fname, sd):
 
     Parse Acme Pies: ::
 
-        >>> lines = [line for line in reader("test/acme_pies.csv", sd)]
+        >>> lines = [line for line in reader("./test/acme_pies.csv", sd)]
         >>> pp.pprint(lines)
         [   {   ('item', True): 'A',
                 ('price', True): '0.15',
@@ -149,7 +149,7 @@ def reader(fname, sd):
 
     Parse Acme Drinks: ::
 
-        >>> lines = [line for line in reader("test/acme_drinks.csv", sd)]
+        >>> lines = [line for line in reader("./test/acme_drinks.csv", sd)]
         >>> pp.pprint(lines)
         [   {   ('item', True): 'X',
                 ('price', True): '0.15',
