@@ -130,3 +130,13 @@ Specimen-C:
         ('quantity', False): '3',
         ('total', True): '6'}]
 ```
+
+Installation
+------------
+
+I am still working on the pip setup for this project. Meanwhile, the installation is still super-simple. Just put semantic_parser.py somewhere on your PYTHON_PATH and you should be good to go.
+
+Future Work
+-----------
+
+Lost of ideas on how to take this forward. The most intriguing one: In order to make this true to the word "semantic", there is value in talking to a thesaurus API in order to populate the semantic dictionary (semi?)automatically.
